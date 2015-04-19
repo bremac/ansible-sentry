@@ -43,6 +43,10 @@
   notify:
     - restart nginx
 
+- name: install sentry crontab
+  template: src=sentry.crontab dest=/etc/cron.d/sentry
+    owner=root group=root mode=0644
+
 - name: start sentry
   service: name={{ item }} state=started enabled=yes
   with_items:

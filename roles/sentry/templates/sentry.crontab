@@ -1,0 +1,1 @@
+0 3 * * * {{ sentry_root }}/env.d/bin/sentry --config={{ sentry_root }}/sentry.conf.py cleanup --days=30
