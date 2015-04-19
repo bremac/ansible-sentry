@@ -1,0 +1,11 @@
+description "web frontend for Sentry exception aggregator"
+
+start on runlevel [2345]
+stop on runlevel [!2345]
+
+setuid sentry
+setgid sentry
+
+respawn
+
+exec {{ sentry_root }}/env.d/bin/sentry --config={{ sentry_root }}/sentry.conf.py start

@@ -1,0 +1,18 @@
+---
+- name: sync apt cache
+  apt: update_cache=yes
+
+- name: install development headers
+  apt: name={{ item }} state=present
+  with_items:
+    - libffi-dev
+    - libxml2-dev
+    - libxslt1-dev
+    - python-dev
+
+- name: install pip
+  apt: name=python-pip state=present
+
+- name: install virtualenv
+  pip: name=virtualenv version=12.1.1
+  sudo: yes

@@ -1,0 +1,62 @@
+from sentry.conf.server import *
+
+
+import os.path
+
+CONF_ROOT = os.path.dirname(__file__)
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'sentry',
+        'USER': 'sentry',
+        'PASSWORD': '',
+        'HOST': '',
+        'PORT': '',
+    }
+}
+
+SENTRY_USE_BIG_INTS = True
+
+SENTRY_HOST = '{{ sentry_host }}'
+SENTRY_URL_PREFIX = 'http://' + SENTRY_HOST
+SENTRY_WEB_HOST = '127.0.0.1'
+SENTRY_WEB_PORT = 9000
+SENTRY_WEB_OPTIONS = {
+    'workers': 3,
+}
+
+SENTRY_REDIS_OPTIONS = {
+    'hosts': {
+        0: {
+            'host': '127.0.0.1',
+            'port': 6379,
+            'timeout': 3,
+        }
+    }
+}
+
+# XXX: Run a separate redis server for TSDBs with persistence enabled.
+SENTRY_BUFFER = 'sentry.buffer.redis.RedisBuffer'
+SENTRY_CACHE = 'sentry.cache.redis.RedisCache'
+SENTRY_RATELIMITER = 'sentry.ratelimits.redis.RedisRateLimiter'
+SENTRY_TSDB = 'sentry.tsdb.redis.RedisTSDB'
+
+# XXX: Push this up to the nginx config. if we really need it.
+SENTRY_QUOTAS = 'sentry.quotas.redis.RedisQuota'
+SENTRY_DEFAULT_MAX_EVENTS_PER_MINUTE = '90%'
+SENTRY_SYSTEM_MAX_EVENTS_PER_MINUTE = 500
+
+SENTRY_FILESTORE = 'django.core.files.storage.FileSystemStorage'
+SENTRY_FILESTORE_OPTIONS = {
+    'location': '/tmp/sentry-files',
+}
+
+CELERY_ALWAYS_EAGER = False
+BROKER_URL = "redis://localhost:6379/1"
+
+SENTRY_ADMIN_EMAIL = '{{ sentry_admin_email }}'
+SERVER_EMAIL = 'sentry@' + SENTRY_HOST
+EMAIL_BACKEND = 'django.core.mail.backends.dummy.EmailBackend'
+
+SECRET_KEY = 'GBVM5WwM9dLAvD4bWMv7kXT7fRv09tvCYAQTKKS7ykcfzgZLo88WKg=='

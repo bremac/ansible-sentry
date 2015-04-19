@@ -1,0 +1,19 @@
+---
+- name: install nginx
+  apt: name=nginx-full state=present
+
+- name: purge default nginx config directories
+  file: path=/etc/nginx/conf.d/ state=absent
+  file: path=/etc/nginx/sites-available/ state=absent
+  file: path=/etc/nginx/sites-enabled/ state=absent
+
+- name: add new nginx vhost directory
+  file: path=/etc/nginx/vhosts/ state=directory
+
+- name: install base nginx configuration
+  copy: src=nginx.conf dest=/etc/nginx/nginx.conf owner=root group=root mode=0644
+  notify:
+    - restart nginx
+
+- name: start nginx
+  service: name=nginx state=started enabled=yes

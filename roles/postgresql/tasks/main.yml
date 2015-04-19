@@ -1,0 +1,21 @@
+---
+- name: add postgresql signing key
+  apt_key: url='https://www.postgresql.org/media/keys/ACCC4CF8.asc' state=present
+
+- name: add postgresql apt repository
+  apt_repository: repo='deb http://apt.postgresql.org/pub/repos/apt/ wheezy-pgdg main' update_cache=yes state=present
+
+- name: install postgresql
+  apt: name={{ item }} state=present
+  with_items:
+    - postgresql-9.4
+    - libpq-dev
+    - python-psycopg2
+
+- name: install postgresql configuration
+  copy: src=postgresql-config/ dest=/etc/postgresql/9.4/main/ owner=root group=root mode=0644
+  notify:
+    - restart postgresql
+
+- name: start postgresql
+  service: name=postgresql state=started enabled=yes

@@ -1,0 +1,53 @@
+---
+- name: create sentry system user
+  user: name=sentry home={{ sentry_root}} shell=/bin/bash state=present
+
+# XXX: Do these belong in the postgresql role instead?
+- name: create sentry database user
+  postgresql_user: user=sentry role_attr_flags=CREATEDB,SUPERUSER state=present
+  sudo: yes
+  sudo_user: postgres
+
+- name: create sentry database
+  postgresql_db: name=sentry owner=sentry state=present
+  sudo: yes
+  sudo_user: postgres
+
+- name: install sentry package
+  pip: name=sentry[postgres] version=7.4.3 virtualenv={{ sentry_root }}/env.d/
+  sudo: yes
+  sudo_user: sentry
+  notify:
+    - restart sentry
+
+- name: install sentry configuration
+  template: src=sentry.conf.py.j2 dest={{ sentry_root }}/sentry.conf.py
+    owner=sentry group=sentry mode=0644
+  sudo: yes
+  sudo_user: sentry
+  notify:
+    - restart sentry
+
+- name: install sentry upstart configuration
+  template: src=init/{{ item }}.conf.j2 dest=/etc/init/{{ item }}.conf
+    owner=root group=root mode=0644
+  with_items:
+    - sentry_web
+    - sentry_worker
+  notify:
+    - restart sentry
+
+- name: install sentry vhost
+  template: src=sentry.vhost.j2 dest=/etc/nginx/vhosts/sentry
+    owner=root group=root mode=0644
+  notify:
+    - restart nginx
+
+- name: start sentry
+  service: name={{ item }} state=started enabled=yes
+  with_items:
+    - sentry_web
+    - sentry_worker
+
+- name: check that sentry is up
+  command: curl http://localhost
