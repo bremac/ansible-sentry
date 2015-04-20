@@ -31,9 +31,7 @@
 - name: install sentry upstart configuration
   template: src=init/{{ item }}.conf.j2 dest=/etc/init/{{ item }}.conf
     owner=root group=root mode=0644
-  with_items:
-    - sentry_web
-    - sentry_worker
+  with_items: sentry_services
   notify:
     - restart sentry
 
@@ -49,9 +47,7 @@
 
 - name: start sentry
   service: name={{ item }} state=started enabled=yes
-  with_items:
-    - sentry_web
-    - sentry_worker
+  with_items: sentry_services
 
 - name: check that sentry is up
   command: curl http://localhost

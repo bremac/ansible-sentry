@@ -1,4 +1,4 @@
-description "web frontend for Sentry exception aggregator"
+description "celery backend for Sentry exception aggregator"
 
 start on runlevel [2345]
 stop on runlevel [!2345]
@@ -8,4 +8,4 @@ setgid sentry
 
 respawn
 
-exec {{ sentry_root }}/env.d/bin/sentry --config={{ sentry_root }}/sentry.conf.py worker -B
+exec {{ sentry_root }}/env.d/bin/sentry --config={{ sentry_root }}/sentry.conf.py celery worker

@@ -2,6 +2,4 @@
 # XXX: Is there any way to pull the service names into a variable?
 - name: restart sentry
   service: name={{ item }} state=restarted
-  with_items:
-    - sentry_web
-    - sentry_worker
+  with_items: sentry_services
