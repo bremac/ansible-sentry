@@ -1,0 +1,4 @@
+---
+redis_services:
+  - redis_cache
+  - redis_store

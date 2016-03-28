@@ -1,0 +1,11 @@
+description "{{ item }} server daemon"
+
+start on runlevel [2345]
+stop on runlevel [!2345]
+
+setuid redis
+setgid redis
+
+respawn
+
+exec redis-server /etc/redis/{{ item }}.conf

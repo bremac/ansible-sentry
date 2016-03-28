@@ -3,9 +3,11 @@
   apt: name=nginx-full state=present
 
 - name: purge default nginx config directories
-  file: path=/etc/nginx/conf.d/ state=absent
-  file: path=/etc/nginx/sites-available/ state=absent
-  file: path=/etc/nginx/sites-enabled/ state=absent
+  file: path={{ item }} state=absent
+  with_items:
+    - /etc/nginx/conf.d/
+    - /etc/nginx/sites-available/
+    - /etc/nginx/sites-enabled/
 
 - name: add new nginx vhost directory
   file: path=/etc/nginx/vhosts/ state=directory

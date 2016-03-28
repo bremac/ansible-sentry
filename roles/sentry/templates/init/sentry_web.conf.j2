@@ -8,4 +8,5 @@ setgid sentry
 
 respawn
 
-exec {{ sentry_root }}/env.d/bin/sentry --config={{ sentry_root }}/sentry.conf.py start
+env SENTRY_CONF=/etc/sentry
+exec {{ sentry_root }}/env.d/bin/sentry start

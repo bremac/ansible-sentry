@@ -3,12 +3,41 @@
   apt_repository: repo='ppa:chris-lea/redis-server' update_cache=yes state=present
 
 - name: install redis
-  apt: name=redis-server state=present
+  apt: name=redis-server=3:3.0.7-1chl1~trusty1 state=present
+  notify:
+    - restart redis
 
-- name: install redis configuration
-  copy: src=redis.conf dest=/etc/redis/redis.conf owner=root group=root mode=0644
+- name: stop default redis server
+  service: name=redis-server state=stopped enabled=no
+  ignore_errors: yes
+
+- name: purge default redis configuration
+  file: path={{ item }} state=absent
+  with_items:
+    - /etc/redis/redis.conf
+    - /etc/redis/sentinel.conf
+    - /etc/default/redis-server
+    - /etc/init.d/redis-server
+
+- name: create redis working directories
+  file: path=/var/lib/redis/{{ item }} state=directory owner=redis group=redis
+    mode=0755
+  with_items: "{{ redis_services }}"
+
+- name: install redis configurations
+  copy: src={{ item }}.conf dest=/etc/redis/{{ item }}.conf owner=root
+    group=root mode=0644
+  with_items: "{{ redis_services }}"
+  notify:
+    - restart redis
+
+- name: install redis upstart configurations
+  template: src=init/redis.conf.j2 dest=/etc/init/{{ item }}.conf
+    owner=root group=root mode=0644
+  with_items: "{{ redis_services }}"
   notify:
     - restart redis
 
 - name: start redis
-  service: name=redis-server state=started enabled=yes
+  service: name={{ item }} state=started enabled=yes
+  with_items: "{{ redis_services }}"

@@ -1,4 +1,4 @@
 ---
 - hosts: sentry
   roles:
-    - sentry
+    - { role: sentry, become: yes }

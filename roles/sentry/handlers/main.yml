@@ -1,5 +1,9 @@
 ---
-# XXX: Is there any way to pull the service names into a variable?
 - name: restart sentry
   service: name={{ item }} state=restarted
-  with_items: sentry_services
+  with_items: "{{ sentry_services }}"
+  notify:
+    - check that sentry is up
+
+- name: check that sentry is up
+  shell: "wget -O - http://{{ sentry_host }} 2>&1 >/dev/null | grep 'Location: .*/auth/login' warn=no"

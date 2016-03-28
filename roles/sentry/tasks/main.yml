@@ -2,38 +2,45 @@
 - name: create sentry system user
   user: name=sentry home={{ sentry_root}} shell=/bin/bash state=present
 
-# XXX: Do these belong in the postgresql role instead?
 - name: create sentry database user
   postgresql_user: user=sentry role_attr_flags=CREATEDB,SUPERUSER state=present
-  sudo: yes
-  sudo_user: postgres
+  become: yes
+  become_user: postgres
+  become_method: sudo
 
 - name: create sentry database
   postgresql_db: name=sentry owner=sentry state=present
-  sudo: yes
-  sudo_user: postgres
+  become: yes
+  become_user: postgres
+  become_method: sudo
 
 - name: install sentry package
-  pip: name=sentry[postgres] version=7.4.3 virtualenv={{ sentry_root }}/env.d/
-  sudo: yes
-  sudo_user: sentry
+  pip: name=sentry version=8.2.3 virtualenv={{ sentry_root }}/env.d/
+  become: yes
+  become_user: sentry
+  become_method: sudo
   notify:
     - restart sentry
 
-- name: install sentry configuration
-  template: src=sentry.conf.py.j2 dest={{ sentry_root }}/sentry.conf.py
-    owner=sentry group=sentry mode=0644
-  sudo: yes
-  sudo_user: sentry
+- name: create sentry config directory
+  file: path=/etc/sentry state=directory owner=root group=root mode=0755
+
+- name: install configuration files
+  template: src={{ item }}.j2 dest=/etc/sentry/{{ item }} owner=root
+    group=root mode=0644
+  with_items:
+    - config.yml
+    - sentry.conf.py
   notify:
     - restart sentry
 
 - name: install sentry upstart configuration
   template: src=init/{{ item }}.conf.j2 dest=/etc/init/{{ item }}.conf
     owner=root group=root mode=0644
-  with_items: sentry_services
+  with_items: "{{ sentry_services }}"
   notify:
     - restart sentry
+    - check that sentry is up
 
 - name: install sentry vhost
   template: src=sentry.vhost.j2 dest=/etc/nginx/vhosts/sentry
@@ -45,9 +52,14 @@
   template: src=sentry.crontab dest=/etc/cron.d/sentry
     owner=root group=root mode=0644
 
+- name: run sentry migrations
+  shell: SENTRY_CONF=/etc/sentry {{ sentry_root }}/env.d/bin/sentry upgrade
+  become: yes
+  become_user: sentry
+  become_method: sudo
+  notify:
+    - restart sentry
+
 - name: start sentry
   service: name={{ item }} state=started enabled=yes
-  with_items: sentry_services
-
-- name: check that sentry is up
-  command: curl http://localhost
+  with_items: "{{ sentry_services }}"

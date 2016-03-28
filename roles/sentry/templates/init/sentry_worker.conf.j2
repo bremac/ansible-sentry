@@ -8,4 +8,5 @@ setgid sentry
 
 respawn
 
-exec {{ sentry_root }}/env.d/bin/sentry --config={{ sentry_root }}/sentry.conf.py celery worker
+env SENTRY_CONF=/etc/sentry
+exec {{ sentry_root }}/env.d/bin/sentry celery worker --pidfile=/tmp/sentry_worker.pid
