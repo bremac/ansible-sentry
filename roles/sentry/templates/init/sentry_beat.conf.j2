@@ -1,0 +1,12 @@
+description "celery backend for Sentry exception aggregator"
+
+start on runlevel [2345]
+stop on runlevel [!2345]
+
+setuid sentry
+setgid sentry
+
+respawn
+
+env SENTRY_CONF=/etc/sentry
+exec {{ sentry_root }}/env.d/bin/sentry celery beat --pidfile=/tmp/sentry_beat.pid
