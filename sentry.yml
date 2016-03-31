@@ -1,4 +1,4 @@
 ---
 - hosts: sentry
   roles:
-    - { role: sentry, become: yes }
+    - sentry  # Set ansible_become=yes in inventory if sudo is required
