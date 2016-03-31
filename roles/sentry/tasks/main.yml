@@ -54,6 +54,7 @@
 
 - name: run sentry migrations
   shell: SENTRY_CONF=/etc/sentry {{ sentry_root }}/env.d/bin/sentry upgrade
+    --noinput
   become: yes
   become_user: sentry
   become_method: sudo
