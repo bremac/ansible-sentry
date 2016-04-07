@@ -62,6 +62,10 @@ SENTRY_ADMIN_EMAIL = '{{ sentry_admin_email }}'
 SERVER_EMAIL = 'sentry@' + SENTRY_HOST
 EMAIL_BACKEND = 'django.core.mail.backends.dummy.EmailBackend'
 
-# TODO: Regenerate this as part of the install process.
-#       Command: sentry config generate-secret-key
-SECRET_KEY = 'GBVM5WwM9dLAvD4bWMv7kXT7fRv09tvCYAQTKKS7ykcfzgZLo88WKg=='
+SECRET_KEY = '{{ sentry_secret_key }}'
+
+{% if sentry_google_client_id is defined %}
+SENTRY_FEATURES['organizations:sso'] = True
+GOOGLE_CLIENT_ID = '{{ sentry_google_client_id }}'
+GOOGLE_CLIENT_SECRET = '{{ sentry_google_client_secret }}'
+{% endif %}
