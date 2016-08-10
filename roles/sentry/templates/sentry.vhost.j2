@@ -22,7 +22,14 @@ server {
   client_max_body_size 5m;
   client_body_buffer_size 100k;
 
+  {% if sentry_organization is defined %}
+  # Redirect users to the sole organization's signin page.
+  location = / {
+    return 301 /{{ sentry_organization }}/;
+  }
+  {% endif %}
+
   location / {
-    proxy_pass        http://localhost:9000;
+    proxy_pass http://localhost:9000;
   }
 }
