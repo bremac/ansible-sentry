@@ -5,16 +5,20 @@
 - name: install ntp
   apt: name=ntp state=present
 
-- name: install development headers
+- name: install build requirements
   apt: name={{ item }} state=present
   with_items:
+    - clang
     - libffi-dev
+    - libjpeg-dev
+    - libssl-dev
     - libxml2-dev
     - libxslt1-dev
     - python-dev
+    - zlib1g-dev
 
 - name: install pip
   apt: name=python-pip state=present
 
 - name: install virtualenv
-  pip: name=virtualenv version=12.1.1
+  pip: name=virtualenv version=15.1.0
