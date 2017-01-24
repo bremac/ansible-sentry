@@ -9,4 +9,4 @@ setgid sentry
 respawn
 
 env SENTRY_CONF=/etc/sentry
-exec {{ sentry_root }}/env.d/bin/sentry start
+exec {{ sentry_root }}/env.d/bin/sentry run web

@@ -5,5 +5,9 @@
   notify:
     - check that sentry is up
 
+- name: remove retired upstart configuration
+  file: path=/etc/init/{{ item }}.conf state=absent
+  with_items: "{{ sentry_retired_services }}"
+
 - name: check that sentry is up
   shell: "wget -O - http://{{ sentry_host }} 2>&1 >/dev/null | grep 'Location: .*/auth/login' warn=no"

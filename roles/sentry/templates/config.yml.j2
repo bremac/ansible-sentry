@@ -1,3 +1,10 @@
+filestore.backend: 'filesystem'
+filestore.options:
+  location: '/tmp/sentry-files'
+
+mail.backend: dummy
+mail.from: 'sentry@{{ sentry_host }}'
+
 redis.clusters:
   default:
     hosts:
@@ -14,3 +21,8 @@ redis.clusters:
       0:
         host: 127.0.0.1
         port: 6380
+
+system.admin-email: '{{ sentry_admin_email }}'
+system.rate-limit: 500
+system.secret-key: '{{ sentry_secret_key }}'
+system.url-prefix: 'http://{{ sentry_host }}'

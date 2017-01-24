@@ -1,4 +1,4 @@
-description "celery backend for Sentry exception aggregator"
+description "event scheduler for Sentry exception aggregator"
 
 start on runlevel [2345]
 stop on runlevel [!2345]
@@ -9,4 +9,4 @@ setgid sentry
 respawn
 
 env SENTRY_CONF=/etc/sentry
-exec {{ sentry_root }}/env.d/bin/sentry run worker
+exec {{ sentry_root }}/env.d/bin/sentry run cron

@@ -1,6 +1,8 @@
 ---
+sentry_retired_services:
+  - sentry_beat
 sentry_root: /srv/sentry
 sentry_services:
-  - sentry_beat
+  - sentry_cron
   - sentry_web
   - sentry_worker

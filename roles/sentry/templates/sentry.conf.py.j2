@@ -19,7 +19,6 @@ DATABASES = {
 SENTRY_USE_BIG_INTS = True
 
 SENTRY_HOST = '{{ sentry_host }}'
-SENTRY_URL_PREFIX = 'http://' + SENTRY_HOST
 SENTRY_WEB_HOST = '127.0.0.1'
 SENTRY_WEB_PORT = 9000
 SENTRY_WEB_OPTIONS = {
@@ -33,14 +32,15 @@ SENTRY_BUFFER_OPTIONS = { 'cluster': 'redis_cache' }
 SENTRY_CACHE = 'sentry.cache.redis.RedisCache'
 SENTRY_CACHE_OPTIONS = { 'cluster': 'redis_cache' }
 
+SENTRY_DIGESTS = 'sentry.digests.backends.redis.RedisBackend'
+SENTRY_DIGESTS_OPTIONS = { 'cluster': 'redis_cache' }
+
 SENTRY_NODESTORE = 'sentry.nodestore.django.DjangoNodeStorage'
 SENTRY_NODESTORE_OPTIONS = {}
 
 # XXX: Push this up to the nginx config. if we really need it.
 SENTRY_QUOTAS = 'sentry.quotas.redis.RedisQuota'
 SENTRY_QUOTA_OPTIONS = { 'cluster': 'redis_cache' }
-SENTRY_DEFAULT_MAX_EVENTS_PER_MINUTE = '90%'
-SENTRY_SYSTEM_MAX_EVENTS_PER_MINUTE = 500
 
 SENTRY_RATELIMITER = 'sentry.ratelimits.redis.RedisRateLimiter'
 SENTRY_RATELIMITER_OPTIONS = { 'cluster': 'redis_cache' }
@@ -48,21 +48,8 @@ SENTRY_RATELIMITER_OPTIONS = { 'cluster': 'redis_cache' }
 SENTRY_TSDB = 'sentry.tsdb.redis.RedisTSDB'
 SENTRY_TSDB_OPTIONS = { 'cluster': 'redis_store' }
 
-
-# XXX: What is this?
-SENTRY_FILESTORE = 'django.core.files.storage.FileSystemStorage'
-SENTRY_FILESTORE_OPTIONS = {
-    'location': '/tmp/sentry-files',
-}
-
 CELERY_ALWAYS_EAGER = False
 BROKER_URL = "redis://localhost:6379/1"  # redis_cache
-
-SENTRY_ADMIN_EMAIL = '{{ sentry_admin_email }}'
-SERVER_EMAIL = 'sentry@' + SENTRY_HOST
-EMAIL_BACKEND = 'django.core.mail.backends.dummy.EmailBackend'
-
-SECRET_KEY = '{{ sentry_secret_key }}'
 
 {% if sentry_google_client_id is defined %}
 SENTRY_FEATURES['organizations:sso'] = True
