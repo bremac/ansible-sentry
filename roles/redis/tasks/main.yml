@@ -3,7 +3,7 @@
   apt_repository: repo='ppa:chris-lea/redis-server' update_cache=yes state=present
 
 - name: install redis
-  apt: name=redis-server=3:3.0.7-1chl1~trusty1 state=present
+  apt: name=redis-server state=present
   notify:
     - restart redis
 

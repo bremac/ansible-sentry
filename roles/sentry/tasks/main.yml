@@ -21,7 +21,15 @@
   become_method: sudo
 
 - name: install sentry package
-  pip: name=sentry version=8.12.0 virtualenv={{ sentry_root }}/env.d/
+  pip: name=sentry version=8.17.0 virtualenv={{ sentry_root }}/env.d/
+  become: yes
+  become_user: sentry
+  become_method: sudo
+  notify:
+    - restart sentry
+
+- name: install sentry plugins package
+  pip: name=sentry-plugins version=8.17.0 virtualenv={{ sentry_root }}/env.d/
   become: yes
   become_user: sentry
   become_method: sudo
